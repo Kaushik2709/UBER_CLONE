@@ -2,19 +2,74 @@ import { UserModel } from "../models/user.model.js";
 import { createUser } from "../services/user.service.js";
 import { validationResult } from "express-validator";
 
-export const registerUser = async (req,res,next)=>{
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
+export const registerUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const { fullName, email, password } = req.body;
+  try {
+    const userExsist = await UserModel.findOne({ email });
+    if (userExsist) {
+        return res.status(400).json({ message: "User already exsist with this email" });
     }
-    const { fullName, email, password } = req.body;
-    try {
-        const hashedPassword = await UserModel.hashPassword(password);
-        const user = await createUser({ firstName: fullName.firstName, lastName: fullName.lastName, email, password: hashedPassword });
-        const userToken = UserModel.generateAuthToken(user._id);
-        res.status(201).json({ message: "User registered successfully", user, token: userToken });
-    } catch (error) {
-        console.log(error);
-        
+    const user = await createUser({
+      firstName: fullName.firstName,
+      lastName: fullName.lastName,
+      email,
+      password,
+    });
+    const userToken = UserModel.generateAuthToken(user._id);
+    
+    res.cookie("token", userToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+    }).status(201).json({
+      message: "User registered successfully",
+      user,
+      token: userToken,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  next();
+};
+
+export const LoginUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const { email, password } = req.body;
+  try {
+    const ExsistingUser = await UserModel.findOne({ email }).select(
+      "+password",
+    );
+    if (!ExsistingUser) {
+      return res.status(401).json({ message: "User not found" });
     }
+    const isPassWordValid = await ExsistingUser.comparePassword(password);
+    if (!isPassWordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+    const userToken = UserModel.generateAuthToken(ExsistingUser._id); 
+    res.cookie("token", userToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+    }).status(200).json({
+      message: "Login successful",
+      user: ExsistingUser,
+      token: userToken,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+  next();
+};
+
+export const getUserProfile = async (req, res, next) => {
+
+    res.status(200).json({ user: req.user });
+    next();
 }
