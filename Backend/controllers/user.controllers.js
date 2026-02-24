@@ -76,8 +76,22 @@ export const getUserProfile = async (req, res, next) => {
 }
 
 export const logoutUser = async (req, res, next) => {
-    res.clearCookie("token").status(200).json({ message: "Logout successful" });
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    await blacklistTokeModel.create({ token });
+    try {
+        const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+        
+        if(token) {
+            try {
+                await blacklistTokeModel.create({ token });
+            } catch(blacklistError) {
+                // If token is already blacklisted or other db error, continue with logout
+                console.log("Blacklist error:", blacklistError.message);
+            }
+        }
+        
+        res.clearCookie("token").status(200).json({ message: "Logout successful" });
+    } catch(error) {
+        console.log("Logout error:", error);
+        res.status(500).json({ message: "Logout failed" });
+    }
     next();
 }

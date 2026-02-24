@@ -1,21 +1,34 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
+import axios from 'axios'
+import { CaptainContext } from '../context/CaptainContext'
 
 const CaptainLogin = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [captainData,setCaptainData] = useState({})
+    const { setCaptain } = useContext(CaptainContext)
+    const navigate = useNavigate()
 
     const [showPassword, setShowPassword] = useState(false)
-    const subMitHandler = (e)=>{
+    const subMitHandler = async (e)=>{
         e.preventDefault()
-        setCaptainData({
-            email:email,
-            password:password
-        })
-        setEmail("")
-        setPassword("")
+        try {
+            const CaptainData = {
+                email:email,
+                password:password
+            }
+            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/captains/login`, CaptainData)
+            if(response.status === 200){
+                setCaptain(response.data.captain)
+                localStorage.setItem('token', response.data.token)
+            }
+            setEmail("")
+            setPassword("")
+            navigate("/home")
+        } catch(error) {
+            console.error("Login error:", error.response?.data || error.message)
+        }
     }
 
     return (

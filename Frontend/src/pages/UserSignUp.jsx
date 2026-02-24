@@ -1,25 +1,39 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
+import axios from 'axios'
+import { UsersContext } from '../context/userContext'
 const UserSignUp = () => {
     const [fistName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [userData,setUserData] = useState({})
     const [showPassword, setShowPassword] = useState(false)
+    const navigate = useNavigate()
+    const { user, setUser } = useContext(UsersContext)
 
-    const submitHandler = (e)=>{
+
+    const submitHandler = async (e) => {
         e.preventDefault()
-        setUserData({
-            fullName:{
-                fistName:fistName,
-                lastName:lastName,
+        const newUser = {
+            fullName: {
+                firstName: fistName,
+                lastName: lastName,
             },
-            email:email,
-            password:password
-        })
-        console.log(userData)
+            email: email,
+            password: password
+        }
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/users/register`, newUser)
+        if (response.status === 201) {
+            setUser(response.data.user)
+            localStorage.setItem('token',response.data.token)
+            navigate("/home")
+        }
+
+        setFirstName("")
+        setLastName("")
+        setEmail("")
+        setPassword("")
     }
 
     return (
@@ -32,7 +46,7 @@ const UserSignUp = () => {
                 alt="Logo"
             />
 
-            <form onSubmit={(e)=>submitHandler(e)} className='flex flex-col gap-5 w-80'>
+            <form onSubmit={(e) => submitHandler(e)} className='flex flex-col gap-5 w-80'>
 
                 <h3 className='text-2xl font-bold'>Create your account</h3>
                 <div className='flex gap-2'>
@@ -86,7 +100,7 @@ const UserSignUp = () => {
                     type='submit'
                     className='bg-black text-white w-full py-2 rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors duration-300 cursor-pointer'
                 >
-                    Login
+                    Create Account
                 </button>
 
                 <p className='text-sm font-bold text-center'>

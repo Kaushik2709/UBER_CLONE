@@ -1,19 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { UsersContext } from '../context/userContext'
 
 const UserLogin = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [userData,setUserData] = useState({})
-
+    const {user,setUser} = useContext(UsersContext)
     const [showPassword, setShowPassword] = useState(false)
-    const subMitHandler = (e)=>{
+    const navigate = useNavigate()
+
+    const subMitHandler = async(e)=>{
         e.preventDefault()
-        setUserData({
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/users/login`,{
             email:email,
             password:password
         })
+        
+        if(response.status === 200){
+            setUser(response.data.user)
+            localStorage.setItem('token',response.data.token)
+            navigate("/home")
+        }
         setEmail("")
         setPassword("")
     }

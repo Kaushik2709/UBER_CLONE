@@ -25,7 +25,7 @@ export const registerCaptain = async (req, res, next) => {
             capacity: vehicle.capacity,
             vehicleType: vehicle.vehicleType
         })
-        const token = captain.generateAuthToken();
+        const token = CaptainModel.generateAuthToken(captain._id);
         res.status(201).cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production"
@@ -46,7 +46,9 @@ export const loginCaptain = async (req, res, next) => {
     }
     try {
         const { email, password } = req.body
-        const captain = await CaptainModel.findOne({ email }).select("+password")
+        console.log("Login attempt - Email:", email);
+        const captain = await CaptainModel.findOne({ email: email.toLowerCase() }).select("+password")
+        console.log("Captain found:", captain ? "Yes" : "No");
         if (!captain) {
             return res.status(400).json({ message: "Captain not found" })
         }
@@ -54,7 +56,7 @@ export const loginCaptain = async (req, res, next) => {
         if (!isPasswordMatched) {
             return res.status(400).json({ message: "Invalid password" })
         }
-        const token = captain.generateAuthToken(captain._id)
+        const token = CaptainModel.generateAuthToken(captain._id)
         res.status(200).cookie("token", token, {
             httpOnly: true,
         }).json({
@@ -63,7 +65,8 @@ export const loginCaptain = async (req, res, next) => {
             token
         })
     } catch (error) {
-        console.log(error)
+        console.log("Login error:", error)
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 
@@ -79,10 +82,23 @@ export const getCaptainProfile = async (req, res, next) => {
 }
 
 export const logoutCaptain = async (req, res, next) => {
-    res.clearCookie('token').status(200).json({
-        message: "captain logged out successfully"
-    })
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    await blacklistTokeModel.create({ token })
-    next()
+    try {
+        const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+        
+        if(token) {
+            try {
+                await blacklistTokeModel.create({ token });
+            } catch(blacklistError) {
+                console.log("Blacklist error:", blacklistError.message);
+            }
+        }
+        
+        res.clearCookie('token').status(200).json({
+            message: "captain logged out successfully"
+        });
+    } catch(error) {
+        console.log("Logout error:", error);
+        res.status(500).json({ message: "Logout failed" });
+    }
+    next();
 }
