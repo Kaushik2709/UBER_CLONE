@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import 'remixicon/fonts/remixicon.css'
+import "remixicon/fonts/remixicon.css";
+import LocationSearchPanel from "../components/locationSearchPanel";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -30,12 +31,16 @@ const Home = () => {
   }, [panel]);
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      {/* Logo */} 
-      <img className="absolute top-5 left-8 w-20 z--990" src="https://imgs.search.brave.com/Aacap5hKxsM0_o4jP2kD_Jpg10Fk6-ZAkDzcVzJN6NQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9sb2dv/cy13b3JsZC5uZXQv/d3AtY29udGVudC91/cGxvYWRzLzIwMjAv/MDUvVWJlci1Mb2dv/LTIwMTEtMjAxNi03/MDB4Mzk0LnBuZw" alt="Logo" />
+      {/* Logo */}
+      <img
+        className="absolute top-5 left-8 w-20 z--990"
+        src="https://imgs.search.brave.com/Aacap5hKxsM0_o4jP2kD_Jpg10Fk6-ZAkDzcVzJN6NQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9sb2dv/cy13b3JsZC5uZXQv/d3AtY29udGVudC91/cGxvYWRzLzIwMjAv/MDUvVWJlci1Mb2dv/LTIwMTEtMjAxNi03/MDB4Mzk0LnBuZw"
+        alt="Logo"
+      />
       {/* Background Image */}
       <img
         className="h-full w-full object-cover"
-      src="https://imgs.search.brave.com/biROPE6MAsc7hn3M4duI41UUPsNvsmTbuOUDRw6Bhyw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTE4/ODM5NDAwNi92ZWN0/b3IvcGVyc29uLXVz/aW5nLWEtcmlkZS1z/aGFyaW5nLXRlY2hu/b2xvZ3ktbW9iaWxl/LWFwcGxpY2F0aW9u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1lbG0wdVZQbHVo/dEZ2QWZEM0E5Z0ds/cmdtV01XTHk3eUJO/WUtHbXNZNGU0PQ"
+        src="https://imgs.search.brave.com/biROPE6MAsc7hn3M4duI41UUPsNvsmTbuOUDRw6Bhyw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTE4/ODM5NDAwNi92ZWN0/b3IvcGVyc29uLXVz/aW5nLWEtcmlkZS1z/aGFyaW5nLXRlY2hu/b2xvZ3ktbW9iaWxl/LWFwcGxpY2F0aW9u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1lbG0wdVZQbHVo/dEZ2QWZEM0E5Z0ds/cmdtV01XTHk3eUJO/WUtHbXNZNGU0PQ"
         alt=""
       />
 
@@ -43,7 +48,9 @@ const Home = () => {
       <div className=" flex flex-col justify-end h-screen absolute top-0 w-full">
         {/* 30% Section */}
         <div className="h-[30%] p-5 bg-white relative">
-          <h5 onClick={()=>setPanel(false)}>{panel ? <i className="ri-arrow-down-wide-fill"></i>: ""}</h5>
+          <h5 className="absolute left-85" onClick={() => setPanel(false)}>
+            {panel ? <i className="ri-arrow-down-wide-fill"></i> : ""}
+          </h5>
           <h4 className="text-2xl font-semibold mb-4">Find Trip</h4>
 
           <form
@@ -72,8 +79,8 @@ const Home = () => {
         </div>
 
         {/* 70% Section */}
-        <div ref={panelRef} className="h-[70%] bg-red-500 panel">
-          Ride options will appear here
+        <div ref={panelRef} className="h-[70%] bg-white panel">
+          <LocationSearchPanel />
         </div>
       </div>
     </div>
