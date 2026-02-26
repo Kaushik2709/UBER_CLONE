@@ -1,4 +1,14 @@
-# Uber Clone Backend API Documentation
+# ⚙️ Uber Clone - Backend API
+
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-5.x-000000?style=for-the-badge&logo=express)](https://expressjs.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-7.x-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
+[![JWT](https://img.shields.io/badge/JWT-Authentication-black?style=for-the-badge&logo=json-web-tokens)](https://jwt.io/)
+
+Comprehensive API documentation for the Uber Clone backend services.
+
+---
+
 
 ## User Registration Endpoint
 
