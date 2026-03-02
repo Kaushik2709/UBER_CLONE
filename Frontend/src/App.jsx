@@ -11,6 +11,7 @@ import UserProtectedWrapper from './pages/UserProtectedWrapper'
 import UserLogout from './pages/UserLogout'
 import CaptainProtectedWrapper from './pages/CaptainProtectedWrapper'
 import { CaptainLogout } from './pages/CaptainLogout'
+import LookingForDriver from './pages/LookingForDriver'
 
 function App() {
 
@@ -30,16 +31,21 @@ function App() {
         <Route path='/user/logout' element={
           <UserProtectedWrapper>
 
-            <UserLogout/>
+            <UserLogout />
           </UserProtectedWrapper>
-          }/>
-          <Route path='/captain/logout' element={
+        } />
+        <Route path='/captain/logout' element={
           <CaptainProtectedWrapper>
 
-            <CaptainLogout/>
+            <CaptainLogout />
           </CaptainProtectedWrapper>
 
-          }/>
+        } />
+        <Route path='/looking-for-driver' element={
+          <UserProtectedWrapper>
+            <LookingForDriver />
+          </UserProtectedWrapper>
+        } />
       </Routes>
     </>
   )

@@ -2,12 +2,13 @@ import React, { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import "remixicon/fonts/remixicon.css";
-import LocationSearchPanel from "../components/locationSearchPanel";
+import LocationSearchPanel from "../components/LocationSearchPanel";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
   const [panel, setPanel] = useState(false); // "pickup" or "destination"
+  const [activeField, setActiveField] = useState("pickup");
   const panelRef = useRef(null);
 
   const submitHandler = (e) => {
@@ -59,7 +60,10 @@ const Home = () => {
           >
             <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-600 rounded-full"></div>
             <input
-              onClick={() => setPanel(true)}
+              onClick={() => {
+                setPanel(true)
+                setActiveField("pickup")
+              }}
               type="text"
               value={pickup}
               onChange={(e) => setPickup(e.target.value)}
@@ -69,7 +73,10 @@ const Home = () => {
 
             <input
               type="text"
-              onClick={() => setPanel(true)}
+              onClick={() => {
+                setPanel(true)
+                setActiveField("destination")
+              }}
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               placeholder="Enter destination"
@@ -80,7 +87,13 @@ const Home = () => {
 
         {/* 70% Section */}
         <div ref={panelRef} className="h-[70%] bg-white panel">
-          <LocationSearchPanel />
+          <LocationSearchPanel
+            setPickup={setPickup}
+            setDestination={setDestination}
+            activeField={activeField}
+            pickup={pickup}
+            destination={destination}
+          />
         </div>
       </div>
     </div>
